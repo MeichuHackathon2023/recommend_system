@@ -56,7 +56,7 @@ def find_similar_video_from_users(N, quried_user_id, similar_user_ids, users, da
     users (user list)  : the list of user data (include history_watch_list, and watch_proportion)
     data (...?) : all videos data labels
 
-    return : return N similar users' ids
+    return : return N similar videos' ids
     """
     video_indices_from_users = []
 
@@ -107,7 +107,7 @@ def Recommend(N, quried_user_id, quried_user_grade, users):
     quried_user_id (int) : the recommending user's id 
     quried_user_grade (int) : the recommending user's grade (education level)
     users (user list)  : the list of user data (include history_watch_list, and watch_proportion)
-    return : return N similar users' ids
+    return : return N similar videos' ids
     """
     data = pd.read_csv('../data/all_video_label_v3.csv')
     quried_user = users[quried_user_id]
