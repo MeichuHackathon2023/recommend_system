@@ -99,3 +99,27 @@ def find_similar_video_from_users(N, quried_user_id, similar_user_ids, users, da
             top_n_recommendations.append(random_id)
 
     return top_n_recommendations[:N]
+
+
+def Recommend(N, quried_user_id, quried_user_grade, users):
+    """
+    N (int) : function will return N similar videos' ids
+    quried_user_id (int) : the recommending user's id 
+    quried_user_grade (int) : the recommending user's grade (education level)
+    users (user list)  : the list of user data (include history_watch_list, and watch_proportion)
+    return : return N similar users' ids
+    """
+    data = pd.read_csv('../data/all_video_label_v3.csv')
+    quried_user = users[quried_user_id]
+    user_watched_data = data.iloc[quried_user['watched_indices']]
+    if (user_watched_data.empty):
+        if quried_user_grade == 0:
+            filtered_df = data[(data["第一冊"] == 1) | (data["第二冊"] == 1)]
+            return filtered_df.sample(N)
+        else:
+            return data.sample(N)
+
+    similar_user_ids = find_similar_user(N, quried_user_id, users, data)
+    recommendations = find_similar_video_from_users(
+        N, quried_user_id, similar_user_ids, users, data)
+    return recommendations
