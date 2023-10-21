@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
+
 def find_similar_user(N, quried_user_id, users, data):
     """
     N (int) : function will return N similar users' ids
@@ -31,16 +32,18 @@ def find_similar_user(N, quried_user_id, users, data):
             feature_vec.loc[ind] = row
         feature_vec = feature_vec.sum().to_frame().T.astype(float)
         users_vecs = pd.concat([users_vecs, feature_vec], axis=0)
-    
+
     # Compute cosine similarity
     cosine_similarities = cosine_similarity(quried_vec, users_vecs)
 
     # Get indices of users sorted by similarity
-    user_indices = sorted(range(len(cosine_similarities[0])), key=lambda i: cosine_similarities[0][i], reverse=True)
-    similar_user_indices = [index for index in user_indices if index != quried_user_id]
+    user_indices = sorted(range(len(
+        cosine_similarities[0])), key=lambda i: cosine_similarities[0][i], reverse=True)
+    similar_user_indices = [
+        index for index in user_indices if index != quried_user_id]
 
     # Recommend the top N videos
-    top_n_similar_users_indices = similar_user_indices[:N] 
+    top_n_similar_users_indices = similar_user_indices[:N]
 
     return top_n_similar_users_indices
 
@@ -58,9 +61,11 @@ def find_similar_video_from_users(N, quried_user_id, similar_user_ids, users, da
     video_indices_from_users = []
 
     for user_id in similar_user_ids:
-        video_indices_from_users = np.concatenate([video_indices_from_users, users[user_id]['watched_indices']])
-    
-    video_indices_from_users = np.unique(video_indices_from_users).astype(float)
+        video_indices_from_users = np.concatenate(
+            [video_indices_from_users, users[user_id]['watched_indices']])
+
+    video_indices_from_users = np.unique(
+        video_indices_from_users).astype(float)
 
     data_from_users = data.iloc[video_indices_from_users]
 
@@ -76,15 +81,13 @@ def find_similar_video_from_users(N, quried_user_id, similar_user_ids, users, da
     cosine_similarities = cosine_similarity(quried_vec, data_from_users)
 
     # Get indices of videos sorted by similarity (excluding the user's watched videos)
-    indices = sorted(range(len(cosine_similarities[0])), key=lambda i: cosine_similarities[0][i], reverse=True)
+    indices = sorted(range(len(
+        cosine_similarities[0])), key=lambda i: cosine_similarities[0][i], reverse=True)
     video_indices = video_indices_from_users[indices]
-    recommended_indices = [index for index in video_indices if index not in users[quried_user_id]["watched_indices"]]
+    recommended_indices = [
+        index for index in video_indices if index not in users[quried_user_id]["watched_indices"]]
 
     # Recommend the top N videos
     top_n_recommendations = recommended_indices[:N]
 
     return top_n_recommendations
-    
-
-def test():
-    print("Hi")
