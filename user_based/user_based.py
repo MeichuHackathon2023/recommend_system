@@ -88,6 +88,14 @@ def find_similar_video_from_users(N, quried_user_id, similar_user_ids, users, da
         index for index in video_indices if index not in users[quried_user_id]["watched_indices"]]
 
     # Recommend the top N videos
-    top_n_recommendations = recommended_indices[:N]
+    top_n_recommendations = []
 
-    return top_n_recommendations
+    for i in range(N):
+        top_n_recommendations.append(recommended_indices[:N][i])
+        if (i % 2 == 0 and i != 0):
+            random_id = np.random.randint(0, len(data), 1)[0]
+            while (random_id in recommended_indices[:N] or random_id in users[quried_user_id]["watched_indices"]):
+                random_id = np.random.randint(0, len(data), 1)[0]
+            top_n_recommendations.append(random_id)
+
+    return top_n_recommendations[:N]
