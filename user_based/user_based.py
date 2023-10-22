@@ -90,8 +90,8 @@ def find_similar_video_from_users(N, quried_user_id, similar_user_ids, users, da
     # Recommend the top N videos
     top_n_recommendations = []
 
-    for i in range(N):
-        top_n_recommendations.append(recommended_indices[:N][i])
+    for i in range(len(recommended_indices)):
+        top_n_recommendations.append(recommended_indices[:len(recommended_indices)][i])
         if (i % 2 == 0 and i != 0):
             random_id = np.random.randint(0, len(data), 1)[0]
             while (random_id in recommended_indices[:N] or random_id in users[quried_user_id]["watched_indices"]):
@@ -109,7 +109,7 @@ def Recommend(N, quried_user_id, quried_user_grade, users):
     users (user list)  : the list of user data (include history_watch_list, and watch_proportion)
     return : return N similar videos' ids
     """
-    data = pd.read_csv('../data/all_video_label_v3.csv')
+    data = pd.read_csv('../data/all_video_label_v4.csv').drop(columns=["video_id"])
     quried_user = users[quried_user_id]
     user_watched_data = data.iloc[quried_user['watched_indices']]
     if (user_watched_data.empty):
@@ -122,4 +122,41 @@ def Recommend(N, quried_user_id, quried_user_grade, users):
     similar_user_ids = find_similar_user(N, quried_user_id, users, data)
     recommendations = find_similar_video_from_users(
         N, quried_user_id, similar_user_ids, users, data)
+    
+    for ind in range(len(recommendations)):
+        recommendations[ind] = int(recommendations[ind])
+
+    #print(recommendations)
     return recommendations
+
+def Recommend_given2D(N ,user_portion_2dlist):
+    users = []
+    for i in range(len(user_portion_2dlist)):
+        user = {
+            "watched_indices" : [],
+            "watched_proportion" :[] 
+        }
+        for ind in range(len(user_portion_2dlist[0])):
+            if user_portion_2dlist[i][ind] > 0:
+                user['watched_indices'].append(ind)
+                user['watched_proportion'].append(user_portion_2dlist[i][ind])
+                users.append(user)
+    
+    print(json.dumps((Recommend(N, 0, [], users))))
+
+import json
+#import sys, json
+"""
+if __name__ == '__main__':
+    N = json.loads(sys.argv[1])
+    user_portion_2dlist = json.loads(sys.argv[2])
+
+    Recommend_given2D(10, user_portion_2dlist)
+"""
+
+
+    
+
+
+
+
