@@ -142,7 +142,13 @@ def Recommend_given2D(N ,user_portion_2dlist):
                 user['watched_proportion'].append(user_portion_2dlist[i][ind])
                 users.append(user)
     
-    print(json.dumps((Recommend(N, 0, [], users))))
+    data = pd.read_csv('../data/all_video_label_v4.csv')
+    names = []
+    for ind in Recommend(N, 0, [], users):
+        videoname = data['video_id'].iloc[ind]
+        #print(videoname)
+        names.append(videoname)
+    print(json.dumps(names))
 
 import json
 #import sys, json
